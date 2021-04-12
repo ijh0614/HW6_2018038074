@@ -315,10 +315,10 @@ int deleteLast(headNode* h) {
 	}
 	else{
 		while(temp_node->link != NULL){//마지막 노드인 경우
-			temp_del_left = temp_node;
-			temp_node = temp_node->link;
+			temp_del_left = temp_node;//마지막의 왼쪽 노드 저장하기 위한 코드
+			temp_node = temp_node->link;//다음으로 이동
 		}
-		temp_del_left->link = NULL;
+		temp_del_left->link = NULL;//마지막 이전노드가 가르키는 주소 NULL로 만들기
 		free(temp_node);
 	}
 	return 0;
@@ -328,7 +328,35 @@ int deleteLast(headNode* h) {
  * 리스트의 링크를 역순으로 재 배치
  */
 int invertList(headNode* h) {
+	listNode* lead;//다음에 바꿔줄 노드의 주소
+	listNode* middle;//현재 방향을 바꾸고 있는 노드의 주소
+	listNode* tail;//지금 노드를 가르켰던, 이제 지금 노드가 가르킬 주소
 
+	lead = h->first;//먼저 제일 처음 노드 정하기.
+
+	//전처리기
+	if(lead == NULL){//저장되어 있는 노드가 없거나
+		printf("\nPlease input two nodes.\n");
+	}
+	else if(lead->link == NULL){//노드가 하나만 있는 경우
+		printf("\nAt least two nodes are required for the program to work.\n");
+	}
+
+	/*맨 첫 노드 설정*/
+	tail = lead;//head노드가 가르키고 있는 노드를 tail로
+	middle = lead->link;//바꾸려는 기준 노드 도착
+	lead = middle->link;//기준 노드 다음 노드 저장
+	middle->link = tail;//이제 마지막 노드를 가르키는게 됨.
+	tail->link = NULL;//이제 가장 끝의 노드이므로 NULL을 저장해야 함.
+	
+	while(lead != NULL){
+		tail = middle;//지금 노드를 tail로
+		middle = lead;//다음 노드를 지금 노드로
+		lead = lead->link;//다음 노드를 그 다음 노드로 설정
+		middle->link = tail;//다음을 가르키고 있던 middle을 이전을 가르키도록 변경
+	}
+//끝나고 head노드가 머리를 가르키는 코드 필요!!!!
+	h->first = middle;
 	return 0;
 }
 
