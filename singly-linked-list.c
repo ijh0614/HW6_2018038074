@@ -45,8 +45,8 @@ int main()
 	int key;//노드의 data에 저장하는 값
 	headNode* headnode=NULL;
 
-	printf("-------[2018038074]------[임종훈]-------------");
 	do{
+		printf("--------------[2018038074]---------[임종훈]---------------------\n");
 		printf("----------------------------------------------------------------\n");
 		printf("                     Singly Linked List                         \n");
 		printf("----------------------------------------------------------------\n");
@@ -68,36 +68,36 @@ int main()
 		case 'p': case 'P'://연결리스트를 출력한다.
 			printList(headnode);
 			break;
-		case 'i': case 'I'://노드 삽입
+		case 'i': case 'I'://노드 삽입. 이미 저장되어있는 노드의 키 값이 크며 그 앞에 저장.
 			printf("Your Key = ");
 			scanf("%d", &key);//key를 입력받고 보낸다.
 			insertNode(headnode, key);
 			break;
-		case 'd': case 'D':
+		case 'd': case 'D'://원하는 키 노드 삭제
 			printf("Your Key = ");
 			scanf("%d", &key);
 			deleteNode(headnode, key);
 			break;
-		case 'n': case 'N':
+		case 'n': case 'N'://마지막에 삽입
 			printf("Your Key = ");
 			scanf("%d", &key);
 			insertLast(headnode, key);
 			break;
-		case 'e': case 'E':
+		case 'e': case 'E'://마지막 삭제
 			deleteLast(headnode);
 			break;
-		case 'f': case 'F':
+		case 'f': case 'F'://맨 앞에 삽입
 			printf("Your Key = ");
 			scanf("%d", &key);
 			insertFirst(headnode, key);
 			break;
-		case 't': case 'T':
+		case 't': case 'T'://맨 앞에 삭제
 			deleteFirst(headnode);
 			break;
-		case 'r': case 'R':
+		case 'r': case 'R'://리스트 거꾸로 저장
 			invertList(headnode);
 			break;
-		case 'q': case 'Q':
+		case 'q': case 'Q'://전부 해제
 			freeList(headnode);
 			break;
 		default:
@@ -146,11 +146,11 @@ int freeList(headNode* h){
  */
 int insertFirst(headNode* h, int key) {
 
-	listNode* node = (listNode*)malloc(sizeof(listNode));
+	listNode* node = (listNode*)malloc(sizeof(listNode));//노드 1개 동적할당
 	node->key = key;
 
-	node->link = h->first;
-	h->first = node;
+	node->link = h->first;//이전에 헤드였던 노드는 새로 만들어준 노드가 가르키게 됨
+	h->first = node;//헤더가 가르키는 노드가 새로 만들어준 노드가 된다
 
 	return 0;
 }
@@ -160,8 +160,8 @@ int insertFirst(headNode* h, int key) {
 int insertNode(headNode* h, int key) {
 	//입력한 key값과 저장되어있는 key값을 비교하는 알고리즘 필요.
 	listNode * temp_node_ad;
-	listNode * temp_big_node=NULL;
-	listNode * temp_left_ad;
+	listNode * temp_big_node=NULL;//더 큰 노드를 저장하는 변수
+	listNode * temp_left_ad;//큰 노드의 왼쪽 노드를 저장
 	int count_num;
 
 	count_num=0;//while문이 1번도 안 돌아갈 경우 오류발생.
@@ -213,7 +213,7 @@ int insertNode(headNode* h, int key) {
  */
 int insertLast(headNode* h, int key) {
 	listNode * temp_node_ad;
-	listNode * temp_left_ad;
+	listNode * temp_left_ad;//마지막 왼쪽 노드
 
 	temp_node_ad = h->first;
 
@@ -259,23 +259,23 @@ int deleteFirst(headNode* h) {
 int deleteNode(headNode* h, int key) {
 	listNode* temp_node;//노드 임시저장
 	listNode* temp_del_left;//삭제할 노드의 왼쪽 노드 주소 임시저장
-	int count;//첫 노드를 지울 때
+	int count;//첫 노드를 지울 때 오류를 방지하기 위해 카운트
 
 	count=0;
 
-	temp_node = h->first;
+	temp_node = h->first;//일단 첫 head노드 임시저장
 	if(temp_node == NULL){//리스트 안에 노드가 없을 경우 전처리
 		printf("\nNothing to delete\n");
 		return 0;
 	}
 
 	while(temp_node != NULL){
-		count++;
-		if(temp_node->key == key){
+		count++;//1번만이 if문을 빠져나가면 count가 1일 것.
+		if(temp_node->key == key){//key가 같으면 temp_node의 주소를 가진채로 탈출
 			break;
 		}
-		temp_del_left = temp_node;
-		temp_node = temp_node->link;
+		temp_del_left = temp_node;//삭제하려는 노드 왼쪽 저장
+		temp_node = temp_node->link;//다음 노드로 이동
 	}
 
 	if(temp_node == NULL){//key를 찾지 못했을 경우.
@@ -283,13 +283,13 @@ int deleteNode(headNode* h, int key) {
 		return 0;
 	}
 	else{
-		if(count==1){
-			h->first = temp_node->link;
-			free(temp_node);
+		if(count==1){//한번에 찾은 경우
+			h->first = temp_node->link;//첫번째 노드를 지우는 것이므로 헤드의 주소를 그 다음 주소(두번째)로 넣어주고
+			free(temp_node);//첫번째 노드 삭제
 		}
 		else{
-			temp_del_left->link = temp_node->link;
-			free(temp_node);
+			temp_del_left->link = temp_node->link;//삭제하려는 노드의 이전 가르키는 곳을 삭제하려는 노드가 가르키는 곳으로 바꾸고
+			free(temp_node);//노드 삭제
 		}
 	}
 	return 0;
