@@ -29,7 +29,7 @@ headNode* initialize(headNode* h);/*반환값으로 headNode 구조체로 선언
 int freeList(headNode* h);//연결리스트의 모든 노드의 동적할당을 해제해준다.
 
 int insertFirst(headNode* h, int key);//맨 첫번째 노드(헤드 노드가 가르키는)에 데이터 삽입
-int insertNode(headNode* h, int key);//맨 마지막에 노드 삽입(?)
+int insertNode(headNode* h, int key);//첫번째 노드부터 크기 비교하면서 입력한 key값보다 큰 값의 left노드에 삽입
 int insertLast(headNode* h, int key);//맨 마지막에 노드 삽입
 
 int deleteFirst(headNode* h);//맨 앞의 노드를 지움
@@ -65,12 +65,12 @@ int main()
 			headnode = initialize(headnode);/*headnode를 동적할당한다. 첫번째 노드가 생긴 것이 아니다!!
 			첫번째 노드가 저장될 주소를 동적할당 한 것.*/
 			break;
-		case 'p': case 'P':
+		case 'p': case 'P'://연결리스트를 출력한다.
 			printList(headnode);
 			break;
-		case 'i': case 'I':
+		case 'i': case 'I'://노드 삽입
 			printf("Your Key = ");
-			scanf("%d", &key);
+			scanf("%d", &key);//key를 입력받고 보낸다.
 			insertNode(headnode, key);
 			break;
 		case 'd': case 'D':
@@ -158,6 +158,39 @@ int insertFirst(headNode* h, int key) {
 
 /* 리스트를 검색하여, 입력받은 key보다 큰값이 나오는 노드 바로 앞에 삽입 */
 int insertNode(headNode* h, int key) {
+	//입력한 key값과 저장되어있는 key값을 비교하는 알고리즘 필요.
+	listNode * temp_node_ad;
+	listNode * temp_left_ad;
+
+	temp_node_ad = h->first;//첫번째 노드의 주소
+
+	if(temp_node_ad == NULL){//비교할 노드가 없으면(전처리)
+		insertFirst(h, key);//첫번째 노드에 넣기
+		return 0;
+	}
+
+	while(temp_node_ad != NULL){
+		temp_left_ad = temp_node_ad;//다음 값 탐색으로 넘어가기 전, 이전 노드 주소 저장
+		
+		if(temp_node_ad->key > key){//입력받은 key보다 큰 값이 나오는 노드를 찾으면
+			break;//반복문 탈출
+		}
+		temp_node_ad = temp_node_ad->link;//다음 주소 저장
+		//끝까지 갔는데 더 큰 값이 없으면 NULL을 저장한채로 while문 종료
+	}
+
+	if(temp_node_ad == NULL){//끝까지 큰 값이 없으면 리스트 마지막에 삽입
+		listNode* node = (listNode*)malloc(sizeof(listNode));
+		temp_left_ad->link = node;
+		node->key = key;
+		node->link = NULL;
+	}
+	else{
+		listNode* node = (listNode*)malloc(sizeof(listNode));//동적할당하고
+		node->key = key;
+		node->link = temp_node_ad;//큰 값을 저장하고 있었던 노드 가르키도록
+		temp_left_ad->link = node;//이전 노드는 새로 생긴 노드를 가르키도록
+	}
 
 	return 0;
 }
@@ -166,7 +199,25 @@ int insertNode(headNode* h, int key) {
  * list에 key에 대한 노드하나를 추가
  */
 int insertLast(headNode* h, int key) {
+	listNode * temp_node_ad;
+	listNode * temp_left_ad;
 
+	temp_node_ad = h->first;
+
+	if(temp_node_ad == NULL){//비교할 노드가 없으면(전처리)
+		insertFirst(h, key);//첫번째 노드에 넣기
+		return 0;
+	}
+
+	while(temp_node_ad != NULL){
+		temp_left_ad = temp_node_ad;//다음 값 탐색으로 넘어가기 전, 이전 노드 주소 저장
+		temp_node_ad = temp_node_ad->link;
+	}//마지막 노드까지 이동
+
+	listNode* node = (listNode*)malloc(sizeof(listNode));//동적할당하고
+	node->key = key;//새로운 노드에 값 저장
+	node->link = NULL;//이 노드가 마지막 노드이므로 다음 노드 주소에 NULL저장
+	temp_left_ad->link = node;//마지막이었던 노드는 새로 만든 노드 가르키도록.
 	return 0;
 }
 
@@ -214,19 +265,19 @@ void printList(headNode* h) {
 
 	printf("\n---PRINT\n");
 
-	if(h == NULL) {
+	if(h == NULL) {//헤드 노드에 NULL이 저장되어있는 경우, 첫번째 노드가 생성되지 않았다는 뜻. 
 		printf("Nothing to print....\n");
 		return;
 	}
 
 	p = h->first;
 
-	while(p != NULL) {
-		printf("[ [%d]=%d ] ", i, p->key);
-		p = p->link;
+	while(p != NULL) {//마지막 노드에는 주소가 NULL이 입력되어 있다.
+		printf("[ [%d]=%d ] ", i, p->key);//i번째 노드에(i는 0부터 시작) 
+		p = p->link;//다음 노드 주소 저장
 		i++;
 	}
 
-	printf("  items = %d\n", i);
+	printf("  items = %d\n", i);//i가 하나 증가하고 탈출하므로 i개 노드 딱 맞게 있다.
 }
 
