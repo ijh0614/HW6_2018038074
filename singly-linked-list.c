@@ -239,16 +239,16 @@ int insertLast(headNode* h, int key) {
  * list의 첫번째 노드 삭제
  */
 int deleteFirst(headNode* h) {
-	listNode* temp_del;//삭제할 노드의 주소 임시저장
+	listNode* temp_del_next;//삭제할 노드의 주소 임시저장
 
 	if(h->first == NULL){//삭제할 노드가 없을 경우 전처리
 		printf("\nNothing to delete\n");
 		return 0;
 	}
 
-	temp_del = h->first;//삭제할 노드 주소 임시저장
-	free(temp_del);//노드 삭제
-	h->first = NULL;
+	temp_del_next = h->first->link;//삭제할 노드 주소 임시저장
+	free(h->first);//노드 삭제
+	h->first = temp_del_next;
 	return 0;
 }
 
@@ -258,14 +258,40 @@ int deleteFirst(headNode* h) {
  */
 int deleteNode(headNode* h, int key) {
 	listNode* temp_node;//노드 임시저장
-	listNode* temp_del;//삭제할 노드의 주소 임시저장
+	listNode* temp_del_left;//삭제할 노드의 왼쪽 노드 주소 임시저장
+	int count;//첫 노드를 지울 때
+
+	count=0;
 
 	temp_node = h->first;
-	if(temp_node == NULL){//삭제할 노드가 없을 경우 전처리
+	if(temp_node == NULL){//리스트 안에 노드가 없을 경우 전처리
 		printf("\nNothing to delete\n");
 		return 0;
 	}
 
+	while(temp_node != NULL){
+		count++;
+		if(temp_node->key == key){
+			break;
+		}
+		temp_del_left = temp_node;
+		temp_node = temp_node->link;
+	}
+
+	if(temp_node == NULL){//key를 찾지 못했을 경우.
+		printf("Can not find key");
+		return 0;
+	}
+	else{
+		if(count==1){
+			h->first = temp_node->link;
+			free(temp_node);
+		}
+		else{
+			temp_del_left->link = temp_node->link;
+			free(temp_node);
+		}
+	}
 	return 0;
 }
 
@@ -274,7 +300,6 @@ int deleteNode(headNode* h, int key) {
  */
 int deleteLast(headNode* h) {
 	listNode* temp_node;//노드 임시저장
-	listNode* temp_del;//삭제할 노드의 주소 임시저장
 	listNode* temp_del_left;//삭제할 노드의 왼쪽 노드 주소 임시저장
 
 	temp_node = h->first;
@@ -289,20 +314,15 @@ int deleteLast(headNode* h) {
 		h->first = NULL;//헤드가 가르키는 주소 NULL초기화
 	}
 	else{
-		do{//temp_node->link가 NULL이면 temp_node가 마지막 node라는 뜻. 
-			temp_del = temp_node->link;//지워야 할 노드
-			temp_del_left = temp_node;//지워야 할 노드의 이전 노드
+		while(temp_node->link != NULL){//마지막 노드인 경우
+			temp_del_left = temp_node;
 			temp_node = temp_node->link;
-		}while(temp_node->link->link != NULL);//temp_node->link->link가 NULL이면 temp_node는 지워야 할 노드의 이전 노드라는 것.
-		
+		}
 		temp_del_left->link = NULL;
-		free(temp_del);
+		free(temp_node);
 	}
-	
-
 	return 0;
 }
-
 
 /**
  * 리스트의 링크를 역순으로 재 배치
