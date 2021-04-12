@@ -160,8 +160,11 @@ int insertFirst(headNode* h, int key) {
 int insertNode(headNode* h, int key) {
 	//입력한 key값과 저장되어있는 key값을 비교하는 알고리즘 필요.
 	listNode * temp_node_ad;
+	listNode * temp_big_node=NULL;
 	listNode * temp_left_ad;
+	int count_num;
 
+	count_num=0;//while문이 1번도 안 돌아갈 경우 오류발생.
 	temp_node_ad = h->first;//첫번째 노드의 주소
 
 	if(temp_node_ad == NULL){//비교할 노드가 없으면(전처리)
@@ -169,17 +172,22 @@ int insertNode(headNode* h, int key) {
 		return 0;
 	}
 
+	temp_left_ad = h->first;//현재 temp_left_ad와 temp_node_ad가 같은 값
+
+	//left 노드랑 temp 노드랑 같은 값에 탈출하게 됨.
 	while(temp_node_ad != NULL){
-		temp_left_ad = temp_node_ad;//다음 값 탐색으로 넘어가기 전, 이전 노드 주소 저장
-		
+		count_num++;
 		if(temp_node_ad->key > key){//입력받은 key보다 큰 값이 나오는 노드를 찾으면
+			temp_big_node = temp_node_ad;
 			break;//반복문 탈출
 		}
+
+		temp_left_ad = temp_node_ad;//다음 값 탐색으로 넘어가기 전, 이전 노드 주소 저장
 		temp_node_ad = temp_node_ad->link;//다음 주소 저장
 		//끝까지 갔는데 더 큰 값이 없으면 NULL을 저장한채로 while문 종료
 	}
 
-	if(temp_node_ad == NULL){//끝까지 큰 값이 없으면 리스트 마지막에 삽입
+	if(temp_big_node == NULL){//끝까지 큰 값이 없으면 리스트 마지막에 삽입
 		listNode* node = (listNode*)malloc(sizeof(listNode));
 		temp_left_ad->link = node;
 		node->key = key;
@@ -188,8 +196,13 @@ int insertNode(headNode* h, int key) {
 	else{
 		listNode* node = (listNode*)malloc(sizeof(listNode));//동적할당하고
 		node->key = key;
-		node->link = temp_node_ad;//큰 값을 저장하고 있었던 노드 가르키도록
-		temp_left_ad->link = node;//이전 노드는 새로 생긴 노드를 가르키도록
+		node->link = temp_big_node;//큰 값을 저장하고 있었던 노드 가르키도록
+		if(count_num==1){
+			h->first = node;//while문이 1번만 돌아갈 경우 temp_left_ad는 헤드 노드가 가르키는 주소이기 때문에
+		}
+		else{
+			temp_left_ad->link = node;//이전 노드는 새로 생긴 노드를 가르키도록
+		}
 	}
 
 	return 0;
@@ -226,8 +239,16 @@ int insertLast(headNode* h, int key) {
  * list의 첫번째 노드 삭제
  */
 int deleteFirst(headNode* h) {
+	listNode* temp_del;//삭제할 노드의 주소 임시저장
 
+	if(h->first == NULL){//삭제할 노드가 없을 경우 전처리
+		printf("\nNothing to delete\n");
+		return 0;
+	}
 
+	temp_del = h->first;//삭제할 노드 주소 임시저장
+	free(temp_del);//노드 삭제
+	h->first = NULL;
 	return 0;
 }
 
@@ -236,15 +257,48 @@ int deleteFirst(headNode* h) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(headNode* h, int key) {
+	listNode* temp_node;//노드 임시저장
+	listNode* temp_del;//삭제할 노드의 주소 임시저장
+
+	temp_node = h->first;
+	if(temp_node == NULL){//삭제할 노드가 없을 경우 전처리
+		printf("\nNothing to delete\n");
+		return 0;
+	}
 
 	return 0;
-
 }
 
 /**
  * list의 마지막 노드 삭제
  */
 int deleteLast(headNode* h) {
+	listNode* temp_node;//노드 임시저장
+	listNode* temp_del;//삭제할 노드의 주소 임시저장
+	listNode* temp_del_left;//삭제할 노드의 왼쪽 노드 주소 임시저장
+
+	temp_node = h->first;
+
+	if(temp_node == NULL){//삭제할 노드가 없을 경우 전처리
+		printf("\nNothing to delete\n");
+		return 0;
+	}
+
+	if(temp_node->link == NULL){//노드가 하나밖에 없을 때
+		free(temp_node);
+		h->first = NULL;//헤드가 가르키는 주소 NULL초기화
+	}
+	else{
+		do{//temp_node->link가 NULL이면 temp_node가 마지막 node라는 뜻. 
+			temp_del = temp_node->link;//지워야 할 노드
+			temp_del_left = temp_node;//지워야 할 노드의 이전 노드
+			temp_node = temp_node->link;
+		}while(temp_node->link->link != NULL);//temp_node->link->link가 NULL이면 temp_node는 지워야 할 노드의 이전 노드라는 것.
+		
+		temp_del_left->link = NULL;
+		free(temp_del);
+	}
+	
 
 	return 0;
 }
