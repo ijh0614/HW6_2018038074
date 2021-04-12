@@ -337,9 +337,11 @@ int invertList(headNode* h) {
 	//전처리기
 	if(lead == NULL){//저장되어 있는 노드가 없거나
 		printf("\nPlease input two nodes.\n");
+		return 0;
 	}
 	else if(lead->link == NULL){//노드가 하나만 있는 경우
 		printf("\nAt least two nodes are required for the program to work.\n");
+		return 0;
 	}
 
 	/*맨 첫 노드 설정*/
