@@ -164,7 +164,7 @@ int insertNode(headNode* h, int key) {
 	listNode * temp_left_ad;//큰 노드의 왼쪽 노드를 저장
 	int count_num;
 
-	count_num=0;//while문이 1번도 안 돌아갈 경우 오류발생.
+	count_num=0;//while문이 1번도 안 돌아갈 경우 오류발생 해결.
 	temp_node_ad = h->first;//첫번째 노드의 주소
 
 	if(temp_node_ad == NULL){//비교할 노드가 없으면(전처리)
